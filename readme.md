@@ -20,7 +20,11 @@ php protected static $sortableSettings = [
 ```php
 {{ App\Post::sortableLink('name', 'Name') }}
 ```
-
+* When you want retrive a sorted collection of models, use the `sort()` method. 
+```php
+App\Post::sort()->paginate();
+// The sort method will extract the sort variable from the request, unless you pass them through (e.g. if you store in the session).
+```
 ## Security
 
 If you find any security issues, or have any concerns, please email [keoghan@klever.co.uk](keoghan@klever.co.uk), rather than using the issue tracker.

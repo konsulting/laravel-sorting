@@ -48,6 +48,10 @@ class SortItem
     {
         $field = trim($input);
 
+        if (empty($field)) {
+            return;
+        }
+
         if (in_array($field[0], ['-', '+'])) {
             $this->setField(substr($field, 1));
             $this->setOrder($field[0]);

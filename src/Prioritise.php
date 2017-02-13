@@ -17,7 +17,8 @@ trait Prioritise
     protected function determinePriorityColumnName()
     {
         if (isset($this->prioritise['column_name'])
-        && ! empty($this->prioritise['column_name'])) {
+            && ! empty($this->prioritise['column_name'])
+        ) {
             return $this->prioritise['column_name'];
         }
 
@@ -37,6 +38,11 @@ trait Prioritise
     public function getMaximumPriority()
     {
         return $this->getPriorityBaseQuery()->max($this->determinePriorityColumnName());
+    }
+
+    public function getMinimumPriority()
+    {
+        return $this->getPriorityBaseQuery()->min($this->determinePriorityColumnName());
     }
 
     /* override this if you need to specify other restrictions */
@@ -82,5 +88,25 @@ trait Prioritise
     public function scopePrioritise($scope)
     {
         return $scope->orderBy($this->determinePriorityColumnName(), 'asc');
+    }
+
+    public function promoteToTop()
+    {
+        $minimumPriority = $this->getMinimumPriority();
+
+        $this->getPriorityBaseQuery()->update([$this->determinePriorityColumnName() => \DB::raw($this->determinePriorityColumnName() . ' + 1')]);
+
+        $this->setPriority($minimumPriority);
+        $this->save();
+    }
+
+    public function demoteToBottom()
+    {
+        $maximumPriority = $this->getMaximumPriority();
+
+        $this->getPriorityBaseQuery()->update([$this->determinePriorityColumnName() => \DB::raw($this->determinePriorityColumnName() . ' - 1')]);
+
+        $this->setPriority($maximumPriority);
+        $this->save();
     }
 }

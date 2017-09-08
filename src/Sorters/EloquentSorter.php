@@ -12,14 +12,13 @@ class EloquentSorter extends Sorter
      * @return mixed|void
      * @throws \Exception
      */
-    public function sort(Builder $builder, $sort = [])
+    public function sort(Builder $builder, $sort = null)
     {
         $this->sorting = $this->parseInstructions(
             empty($sort) ? $this->getSortRequest() : $sort
         );
 
-        $model = $builder->getModel();
-        $modelTable = $model->getTable();
+        $modelTable = $builder->getModel()->getTable();
         $joins = collect($builder->getQuery()->joins);
 
         foreach ($this->sorting as $item) {

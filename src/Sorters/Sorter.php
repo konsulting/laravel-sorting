@@ -14,7 +14,17 @@ abstract class Sorter
         'sortParameterName' => 'sort',
         'defaultSort'       => null,
     ];
+
+    /**
+     * The fields that are sortable.
+     *
+     * @var array
+     */
     protected $sortable;
+
+    /**
+     * @var string
+     */
     protected $sortParameterName;
     protected $sorting;
 
@@ -64,22 +74,25 @@ abstract class Sorter
     }
 
     /**
-     * Parse sort instructions and
+     * Parse sort instructions and instantiate corresponding SortItem objects. Sort instructions may be given as a
+     * comma delimited string, with an optional + or - preceding the field name to specify sort order.
      *
-     * @param string $sort
+     * For example: name,+email,-date_of_birth
+     *
+     * @param string $sortString
      * @return Collection
      */
-    protected function parseInstructions($sort = null)
+    protected function parseInstructions($sortString = '')
     {
-        if (is_null($sort)) {
-            return collect([]);
+        if (empty($sortString)) {
+            return collect();
         }
 
-        $sort = explode(',', $sort);
+        $sortInstructions = explode(',', $sortString);
 
         $result = [];
-        foreach ($sort as $field) {
-            $item = new SortItem($field);
+        foreach ($sortInstructions as $instruction) {
+            $item = new SortItem($instruction);
 
             if ($this->isSortable($item->getField())) {
                 $result[] = $item;
@@ -90,7 +103,7 @@ abstract class Sorter
     }
 
     /**
-     * Check if a given key is sortable.
+     * Check if a given field is sortable.
      *
      * @param string $key
      * @return bool

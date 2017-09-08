@@ -12,11 +12,11 @@ Install using composer: `composer require konsulting/laravel-sorting`
 
 * Add the `Konsulting\Laravel\Sorting\Sortable` trait to your model.
 * Set up the configuration for the model by adding the `$sortableSettings` property providing the allowed sortable fields and a default sort order.
-```
-php protected static $sortableSettings = [
-        'sortable' => ['name', 'created_at', 'updated_at'],
-        'defaultSort' => '+name',
-    ];
+```php 
+protected static $sortableSettings = [
+    'sortable' => ['name', 'created_at', 'updated_at'],
+    'defaultSort' => '+name',
+];
 ```
 * In your view where you’d like to add a sortable link, include the following (example for a Post model):
 ```php

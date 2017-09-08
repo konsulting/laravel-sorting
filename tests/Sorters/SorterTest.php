@@ -3,7 +3,9 @@
 namespace Konsulting\Laravel\Sorting\Tests\Sorters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Konsulting\Laravel\Sorting\Sorters\Sorter as ParentSorter;
+use Konsulting\Laravel\Sorting\SortItem;
 use Konsulting\Laravel\Sorting\Tests\TestCase;
 
 class SorterTest extends TestCase
@@ -15,7 +17,11 @@ class SorterTest extends TestCase
 
     public function setUp()
     {
-        $this->sorter = new Sorter;
+        parent::setUp();
+
+        $this->sorter = new Sorter([
+            'sortable' => ['name', 'email', 'date_of_birth'],
+        ]);
     }
 
     /** @test */
@@ -49,12 +55,35 @@ class SorterTest extends TestCase
 
         $this->assertEquals('email', $name);
     }
+
+    /** @test */
+    public function it_returns_an_empty_collection_when_parsing_instructions_if_no_sort_parameters_are_given()
+    {
+        $result = $this->sorter->parseInstructions();
+
+        $this->assertEquals(Collection::make(), $result);
+    }
+
+    /** @test */
+    public function it_returns_a_collection_of_sort_items_if_they_are_passed_in_and_specified_as_sortable()
+    {
+        $result = $this->sorter->parseInstructions('name,+email,-not_a_sortable_field');
+
+        $expected = Collection::make([new SortItem('name'), new SortItem('+email')]);
+
+        $this->assertEquals($expected, $result);
+    }
 }
 
 class Sorter extends ParentSorter
 {
     public function sort(Builder $builder, $sort = null)
     {
+    }
+
+    public function parseInstructions($sort = '')
+    {
+        return parent::parseInstructions($sort);
     }
 
     public function getSettings()

@@ -131,6 +131,11 @@ class SortItem
         $this->order = isset($this->map[$order]) ? $this->map[$order] : 'none';
     }
 
+    /**
+     * Get the field name and order as an array.
+     *
+     * @return array
+     */
     public function getArrayPair()
     {
         return [$this->field, $this->order];
@@ -168,9 +173,14 @@ class SortItem
         return $this->arrows[$this->order] ?? '';
     }
 
+    /**
+     * Change the sort order to the 'next' order: see the nextOrder property for details.
+     *
+     * @return static
+     */
     public function getNext()
     {
-        $order = isset($this->nextOrder[$this->getOrder()]) ? $this->nextOrder[$this->getOrder()] : '';
+        $order = $this->nextOrder[$this->getOrder()] ?? '';
 
         return new static($this->getField(), $order);
     }

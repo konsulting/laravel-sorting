@@ -81,4 +81,27 @@ class SortItemTest extends TestCase
         $this->assertEquals('-name', $descending);
         $this->assertEquals('name', $noSort);
     }
+
+    /** @test */
+    public function it_returns_the_field_name_and_order_as_an_array()
+    {
+        $item = new SortItem('+name');
+
+        $this->assertEquals(['name', 'asc'], $item->getArrayPair());
+    }
+
+    /** @test */
+    public function it_increments_the_sort_order_and_returns_a_new_sort_item()
+    {
+        $item = new SortItem('+name');
+
+        $nextSortOrderItem = $item->getNext();
+        $this->assertEquals('desc', $nextSortOrderItem->getOrder());
+
+        $nextSortOrderItem = $nextSortOrderItem->getNext();
+        $this->assertEquals('none', $nextSortOrderItem->getOrder());
+
+        $nextSortOrderItem = $nextSortOrderItem->getNext();
+        $this->assertEquals('asc', $nextSortOrderItem->getOrder());
+    }
 }

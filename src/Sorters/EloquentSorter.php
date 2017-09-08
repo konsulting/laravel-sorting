@@ -2,18 +2,20 @@
 
 namespace Konsulting\Laravel\Sorting\Sorters;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class EloquentSorter extends Sorter
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder  $builder
-     * @param null $sort
-     *
+     * @param Builder $builder
+     * @param array   $sort
+     * @return mixed|void
      * @throws \Exception
      */
-    public function sort($builder, $sort = null)
+    public function sort(Builder $builder, $sort = [])
     {
         $this->sorting = $this->parseInstructions(
-            (is_null($sort) || empty($sort)) ? $this->getSortRequest() : $sort
+            empty($sort) ? $this->getSortRequest() : $sort
         );
 
         $model = $builder->getModel();

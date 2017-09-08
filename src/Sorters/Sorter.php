@@ -2,20 +2,27 @@
 
 namespace Konsulting\Laravel\Sorting\Sorters;
 
-use Konsulting\Laravel\Sorting\SortItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Konsulting\Laravel\Sorting\SortItem;
 
 abstract class Sorter
 {
     protected $settings = [
-        'sortable' => [],
+        'sortable'          => [],
         'sortParameterName' => 'sort',
-        'defaultSort' => null,
+        'defaultSort'       => null,
     ];
     protected $sortable;
     protected $sortParameterName;
     protected $sorting;
 
+    /**
+     * Merge settings and initialise sorting parameter.
+     *
+     * @param array $settings
+     */
     public function __construct($settings = [])
     {
         $this->settings = collect($this->settings)->merge($settings);
@@ -26,18 +33,42 @@ abstract class Sorter
         $this->sorting = collect([]);
     }
 
+    /**
+     * Set the parameter name used for sorting.
+     *
+     * @param string $name
+     */
     public function setSortParameterName($name)
     {
         $this->sortParameterName = $name;
     }
 
-    abstract public function sort($builder, $sort = null);
+    /**
+     * Perform the sort.
+     *
+     * @param Builder $builder
+     * @param null    $sort
+     * @return mixed
+     */
+    abstract public function sort(Builder $builder, $sort = null);
 
+    /**
+     * Get the sort parameter name if it has been sent through in the request. If not, get it from the settings or
+     * failing that use an empty array.
+     *
+     * @return string
+     */
     protected function getSortRequest()
     {
-        return request()->get($this->sortParameterName, $this->settings->get('defaultSort', null));
+        return request()->get($this->sortParameterName, $this->settings->get('defaultSort', []));
     }
 
+    /**
+     * Parse sort instructions and
+     *
+     * @param string $sort
+     * @return Collection
+     */
     protected function parseInstructions($sort = null)
     {
         if (is_null($sort)) {
@@ -58,13 +89,28 @@ abstract class Sorter
         return collect($result);
     }
 
+    /**
+     * Check if a given key is sortable.
+     *
+     * @param string $key
+     * @return bool
+     */
     public function isSortable($key)
     {
         return (bool) in_array($key, $this->sortable);
     }
 
-    public function sortableLink($col, $title = null, $attributes = []) {
-        if (! $this->isSortable($col)) {
+    /**
+     * Return a link that can be used to trigger a sort.
+     *
+     * @param       $col
+     * @param null  $title
+     * @param array $attributes
+     * @return HtmlString|null|string
+     */
+    public function sortableLink($col, $title = null, $attributes = [])
+    {
+        if ( ! $this->isSortable($col)) {
             return $title;
         }
 
@@ -86,6 +132,10 @@ abstract class Sorter
         return new HtmlString("<a href=\"{$fullUrl}\"{$attributeString}>{$title} {$indicator}</a>");
     }
 
+    /**
+     * @param $col
+     * @return array
+     */
     protected function buildLinkParameters($col)
     {
         foreach ($this->sorting as $item) {

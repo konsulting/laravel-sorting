@@ -2,7 +2,7 @@
 namespace Konsulting\Laravel\Sorting;
 
 /**
- * Prioritise
+ * @trait Prioritise
  * Helpers for using a priority column, and allowing promotion/demotion, reordering
  */
 trait Prioritise

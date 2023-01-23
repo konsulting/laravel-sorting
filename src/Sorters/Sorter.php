@@ -5,6 +5,7 @@ namespace Konsulting\Laravel\Sorting\Sorters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Konsulting\Laravel\Sorting\SortItem;
 
 abstract class Sorter
@@ -127,7 +128,7 @@ abstract class Sorter
             return $title;
         }
 
-        $title = is_null($title) ? ucfirst(str_singular(str_replace('_', ' ', $col))) : $title;
+        $title = is_null($title) ? ucfirst(Str::singular(str_replace('_', ' ', $col))) : $title;
 
         $item = $this->sorting->first(function ($item) use ($col) {
             return $item->getField() == $col;

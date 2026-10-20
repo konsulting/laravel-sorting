@@ -12,7 +12,7 @@ class EloquentSorterTest extends TestCase
      */
     protected $sorter;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

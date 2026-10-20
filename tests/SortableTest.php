@@ -9,7 +9,7 @@ use Konsulting\Laravel\Sorting\Tests\TestSupport\UsersSeeder;
 
 class SortableTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

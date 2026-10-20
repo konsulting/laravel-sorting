@@ -47,6 +47,26 @@ class SortableTest extends TestCase
         $this->assertEquals($expectedDates, $sortedDates);
     }
 
+    /** @test */
+    public function it_reads_the_sort_order_from_the_request()
+    {
+        request()->query->set('sort', '-name');
+
+        $expectedNames = User::all()->pluck('name')->sort()->reverse()->values()->toArray();
+
+        $this->assertEquals($expectedNames, User::sort()->pluck('name')->toArray());
+    }
+
+    /** @test */
+    public function it_falls_back_to_the_default_sort_when_the_request_sort_is_not_a_string()
+    {
+        request()->query->set('sort', ['name']);
+
+        $expectedNames = User::all()->pluck('name')->sort()->values()->toArray();
+
+        $this->assertEquals($expectedNames, User::sort()->pluck('name')->toArray());
+    }
+
     public function it_sorts_by_multiple_columns()
     {
 

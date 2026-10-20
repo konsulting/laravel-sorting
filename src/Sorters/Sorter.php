@@ -71,7 +71,9 @@ abstract class Sorter
      */
     protected function getSortRequest()
     {
-        return request()->get($this->sortParameterName, $this->settings->get('defaultSort', []));
+        $sort = request()->input($this->sortParameterName);
+
+        return is_string($sort) ? $sort : $this->settings->get('defaultSort', []);
     }
 
     /**
